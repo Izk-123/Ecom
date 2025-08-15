@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+  <div class="row mb-4">
+    <div class="col">
+      <h1 class="display-5 fw-bold">Admin Dashboard</h1>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-lg-6 mb-4">
+      <div class="card shadow-sm dashboard-card">
+        <div class="card-header bg-primary text-white">
+          <h2 class="h5 mb-0">Vendors Awaiting Approval</h2>
+        </div>
+        <div class="card-body">
+          {% if vendors_pending %}
+          <div class="list-group">
+            {% for v in vendors_pending %}
+            <div class="list-group-item d-flex justify-content-between align-items-center">
+              <div>
+                <h6 class="mb-0">{{ v.username }}</h6>
+                <small class="text-muted">{{ v.email }}</small>
+              </div>
+                <a href="{% url 'approve_vendor' v.id %}" class="btn btn-sm btn-success">Approve</a>
+                <a href="/admin/shop/user/{{ v.id }}/change/" class="btn btn-sm btn-outline-secondary">Details</a>
+            </div>
+            {% endfor %}
+          </div>
+          {% else %}
+          <div class="alert alert-success mb-0">No pending vendor approvals.</div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-6">
+      <div class="card shadow-sm dashboard-card">
+        <div class="card-header bg-primary text-white">
+          <h2 class="h5 mb-0">Manual Payments Pending Review</h2>
+        </div>
+        <div class="card-body">
+          {% if manual_payments %}
+          <div class="list-group">
+            {% for mp in manual_payments %}
+            <div class="list-group-item d-flex justify-content-between align-items-center">
+              <div>
+                <h6 class="mb-0">Payment #{{ mp.id }}</h6>
+                <small class="text-muted">Order: {% if mp.order %}#{{ mp.order.id }}{% else %}-{% endif %}</small>
+              </div>
+              <a href="/admin/shop/manualpayment/{{ mp.id }}/change/" class="btn btn-sm btn-outline-primary">Review</a>
+            </div>
+            {% endfor %}
+          </div>
+          {% else %}
+          <div class="alert alert-success mb-0">No pending manual payments.</div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

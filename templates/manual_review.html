@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+  <div class="row mb-4">
+    <div class="col">
+      <h1 class="display-5 fw-bold">Manual Payments Review</h1>
+    </div>
+  </div>
+
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead class="table-light">
+            <tr>
+              <th>ID</th>
+              <th>Order</th>
+              <th>Payer</th>
+              <th>MSISDN</th>
+              <th>Ref</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for i in items %}
+            <tr>
+              <td>{{ i.id }}</td>
+              <td>{% if i.order %}#{{ i.order.id }}{% else %}-{% endif %}</td>
+              <td>{{ i.payer_name }}</td>
+              <td>{{ i.msisdn }}</td>
+              <td><code>{{ i.reference_code }}</code></td>
+              <td>
+                <a href="/admin/manual/review/{{ i.id }}/approve/" class="btn btn-sm btn-success me-1">Approve</a>
+                <a href="/admin/manual/review/{{ i.id }}/reject/" class="btn btn-sm btn-danger">Reject</a>
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="6" class="text-center py-4">No submissions found.</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

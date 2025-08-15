@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+  <div class="row mb-4">
+    <div class="col">
+      <h1 class="display-5 fw-bold">Vendor Dashboard</h1>
+      <p class="lead">Manage your products and orders</p>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-lg-6 mb-4">
+      <div class="card shadow-sm dashboard-card">
+        <div class="card-header bg-primary text-white">
+          <h2 class="h5 mb-0">Your Products</h2>
+        </div>
+        <div class="card-body">
+          {% if products %}
+          <div class="list-group">
+            {% for p in products %}
+            <div class="list-group-item d-flex justify-content-between align-items-center">
+              <div>
+                <h6 class="mb-0">{{ p.name }}</h6>
+                <small class="text-muted">Stock: {{ p.stock_quantity }}</small>
+              </div>
+              <span class="badge bg-success rounded-pill">MWK {{ p.price_mwk }}</span>
+            </div>
+            {% endfor %}
+          </div>
+          {% else %}
+          <div class="alert alert-info mb-0">No products yet.</div>
+          {% endif %}
+        </div>
+        <div class="card-footer">
+          <a href="{% url 'product_create' %}" class="btn btn-primary me-md-2">
+            <i class="bi bi-plus-circle"></i> Add Product
+          </a>
+          <a href="{% url 'vendor_product_list' %}" class="btn btn-outline-primary">
+            <i class="bi bi-list"></i> Manage Products
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-6">
+      <div class="card shadow-sm dashboard-card">
+        <div class="card-header bg-primary text-white">
+          <h2 class="h5 mb-0">Recent Orders</h2>
+        </div>
+        <div class="card-body">
+          {% if orders %}
+          <div class="list-group">
+            {% for o in orders %}
+            <div class="list-group-item">
+              <div class="d-flex justify-content-between">
+                <div>
+                  <h6 class="mb-0">Order #{{ o.id }}</h6>
+                  <small class="text-muted">Total: MWK {{ o.total_amount_mwk }}</small>
+                </div>
+                <div>
+                  <span class="badge 
+                    {% if o.payment_status == 'paid' %}bg-success
+                    {% else %}bg-warning text-dark
+                    {% endif %}">
+                    {{ o.payment_status|title }}
+                  </span>
+                </div>
+              </div>
+              <div class="mt-2">
+                {% if o.payment_method == 'cod' and o.payment_status != 'paid' %}
+                <a href="/vendor/orders/{{ o.id }}/cod-collected/" class="btn btn-sm btn-outline-success">Mark COD
+                  Collected</a>
+                {% endif %}
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+          {% else %}
+          <div class="alert alert-info mb-0">No orders yet.</div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+          <h2 class="h4 mb-0">Login</h2>
+        </div>
+        <div class="card-body">
+          <form method="post">
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="mb-3">
+              {{ field.label_tag }}
+              {{ field }}
+              {% if field.errors %}
+              <div class="invalid-feedback d-block">
+                {{ field.errors.0 }}
+              </div>
+              {% endif %}
+            </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-primary w-100">Login</button>
+          </form>
+          <hr class="my-4">
+          <div class="text-center">
+            <p class="mb-2">Don't have an account?</p>
+            <a href="/accounts/signup/customer/" class="btn btn-outline-primary me-2">Sign up as Customer</a>
+            <a href="/accounts/signup/vendor/" class="btn btn-outline-secondary">Sign up as Vendor</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

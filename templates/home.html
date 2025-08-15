@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+  <div class="row mb-4">
+    <div class="col">
+      <h1 class="display-5 fw-bold">Products</h1>
+      <p class="lead">Browse our latest products</p>
+    </div>
+  </div>
+  
+  {% if page_obj %}
+  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+    {% for p in page_obj %}
+    <div class="col">
+      <div class="card h-100 shadow-sm">
+        <div class="bg-light" style="height: 200px; display: flex; align-items: center; justify-content: center;">
+          <span class="text-muted">Product Image</span>
+        </div>
+        <div class="card-body">
+          <h5 class="card-title"><a href="/p/{{ p.slug }}/" class="text-decoration-none">{{ p.name }}</a></h5>
+          <p class="card-text text-success fw-bold">MWK {{ p.price_mwk }}</p>
+          <form method="post" action="/cart/add/" class="d-flex align-items-center">
+            {% csrf_token %}
+            <input type="hidden" name="product_id" value="{{ p.id }}">
+            <input type="number" name="qty" value="1" min="1" class="form-control me-2" style="width: 80px;">
+            <button class="btn btn-primary">Add to Cart</button>
+          </form>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="alert alert-info">No products available at the moment. Please check back later.</div>
+  {% endif %}
+  
+  {% if page_obj.has_other_pages %}
+  <nav class="mt-5">
+    <ul class="pagination justify-content-center">
+      {% if page_obj.has_previous %}
+      <li class="page-item">
+        <a class="page-link" href="/?page={{ page_obj.previous_page_number }}">Previous</a>
+      </li>
+      {% else %}
+      <li class="page-item disabled">
+        <span class="page-link">Previous</span>
+      </li>
+      {% endif %}
+      
+      {% for num in page_obj.paginator.page_range %}
+        {% if page_obj.number == num %}
+        <li class="page-item active">
+          <span class="page-link">{{ num }}</span>
+        </li>
+        {% else %}
+        <li class="page-item">
+          <a class="page-link" href="/?page={{ num }}">{{ num }}</a>
+        </li>
+        {% endif %}
+      {% endfor %}
+      
+      {% if page_obj.has_next %}
+      <li class="page-item">
+        <a class="page-link" href="/?page={{ page_obj.next_page_number }}">Next</a>
+      </li>
+      {% else %}
+      <li class="page-item disabled">
+        <span class="page-link">Next</span>
+      </li>
+      {% endif %}
+    </ul>
+  </nav>
+  {% endif %}
+</div>
+{% endblock %}

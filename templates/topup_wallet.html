@@ -1,0 +1,28 @@
+<!-- topup_wallet.html -->
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+          <h2 class="h5 mb-0">Add Funds to Wallet</h2>
+        </div>
+        <div class="card-body">
+          <form method="post">
+            {% csrf_token %}
+            <div class="mb-3">
+              <label class="form-label">Amount (MWK)</label>
+              <input type="number" name="amount" class="form-control" min="100" required>
+              <div class="form-text">Minimum amount is MWK 100</div>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">
+              <i class="bi bi-currency-exchange"></i> Add Funds
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

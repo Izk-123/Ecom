@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+  <div class="row mb-4">
+    <div class="col">
+      <h1 class="display-5 fw-bold">Customer Dashboard</h1>
+    </div>
+    <div class="col-auto">
+      <a href="{% url 'wallet_detail' %}" class="btn btn-outline-primary">
+        <i class="bi bi-wallet2"></i> My Wallet
+      </a>
+    </div>
+  </div>
+
+  <div class="card shadow-sm dashboard-card">
+    <div class="card-header bg-primary text-white">
+      <h2 class="h5 mb-0">Your Orders</h2>
+    </div>
+    <div class="card-body">
+      {% if orders %}
+      <div class="list-group">
+        {% for o in orders %}
+        <div class="list-group-item d-flex justify-content-between align-items-center">
+          <div>
+            <h6 class="mb-0">Order #{{ o.id }}</h6>
+            <small class="text-muted">{{ o.created_at }}</small>
+          </div>
+          <div>
+            <span class="badge bg-primary rounded-pill">MWK {{ o.total_amount_mwk }}</span>
+            <span class="badge 
+              {% if o.payment_status == 'paid' %}bg-success
+              {% elif o.payment_status == 'pending' %}bg-warning text-dark
+              {% else %}bg-secondary
+              {% endif %} ms-2">
+              {{ o.payment_status|title }}
+            </span>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="alert alert-info mb-0">You haven't placed any orders yet.</div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

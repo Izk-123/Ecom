@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container py-5">
+  <div class="row">
+    <div class="col-lg-6">
+      <div class="bg-light" style="height: 400px; display: flex; align-items: center; justify-content: center;">
+        <span class="text-muted">Product Image</span>
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <h1 class="display-5 fw-bold">{{ object.name }}</h1>
+      <p class="lead">{{ object.description }}</p>
+      <h3 class="text-success mb-4">MWK {{ object.price_mwk }}</h3>
+      <form method="post" action="/cart/add/" class="d-flex align-items-center">
+        {% csrf_token %}
+        <input type="hidden" name="product_id" value="{{ object.id }}">
+        <input type="number" name="qty" value="1" min="1" class="form-control me-3" style="width: 100px;">
+        <button class="btn btn-primary btn-lg">Add to Cart</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

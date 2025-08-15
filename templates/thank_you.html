@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+  <div class="row">
+    <div class="col-md-8 mx-auto text-center py-5">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body">
+          <div class="mb-4">
+            <i class="bi bi-check-circle-fill text-success" style="font-size: 5rem;"></i>
+          </div>
+          <h1 class="display-5 fw-bold mb-3">Thank You!</h1>
+          <p class="lead mb-4">Your order has been placed successfully.</p>
+          
+          <div class="card border-primary mb-4">
+            <div class="card-header bg-primary text-white">
+              Order Details
+            </div>
+            <div class="card-body">
+              <p class="card-text">Order #{{ order.id }}</p>
+              <h5 class="card-title">Total: MWK {{ order.total_amount_mwk }}</h5>
+            </div>
+          </div>
+          
+          {% if order.payment_method == 'manual' %}
+          <div class="alert alert-warning">
+            <h5 class="alert-heading">Next Step: Submit Payment Proof</h5>
+            <p>Please submit your deposit receipt to complete your order.</p>
+            <hr>
+            <a href="/payments/manual/{{ order.id }}/submit/" class="btn btn-warning">
+              <i class="bi bi-upload me-2"></i>Upload Receipt
+            </a>
+          </div>
+          {% elif order.payment_method == 'cod' %}
+          <div class="alert alert-info">
+            <h5 class="alert-heading">Cash on Delivery</h5>
+            <p>Please prepare the exact amount to pay our rider upon delivery.</p>
+          </div>
+          {% endif %}
+          
+          <a href="/" class="btn btn-outline-primary mt-3">
+            <i class="bi bi-arrow-left me-2"></i>Continue Shopping
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
