@@ -1,4 +1,3 @@
-<!-- product_form.html -->
 {% extends 'base.html' %}
 {% block content %}
 <div class="container mt-5">
@@ -11,14 +10,57 @@
           </h2>
         </div>
         <div class="card-body">
-          <form method="post">
+          <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
-            {{ form.as_p }}
+            
+            <!-- Main product form fields -->
+            <div class="mb-3">
+              <label class="form-label">Product Name</label>
+              {{ form.name }}
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Slug</label>
+              {{ form.slug }}
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Description</label>
+              {{ form.description }}
+            </div>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Price (MWK)</label>
+                {{ form.price_mwk }}
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Stock Quantity</label>
+                {{ form.stock_quantity }}
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Category</label>
+              {{ form.category }}
+            </div>
+            
+            <!-- Product images formset -->
+            <h4 class="mt-4">Product Images</h4>
+            {{ formset.management_form }}
+            <div class="row">
+              {% for form in formset %}
+              <div class="col-md-6 mb-3">
+                <div class="card">
+                  <div class="card-body">
+                    {{ form.as_p }}
+                  </div>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+            
             <div class="mt-4">
               <button type="submit" class="btn btn-primary">
                 <i class="bi bi-save"></i> Save
               </button>
-              <a href="{% url 'vendor_product_list' %}" class="btn btn-outline-secondary">
+              <a href="{% url 'vendor_product_list' %}" class="btn btn-outline-secondary ms-2">
                 Cancel
               </a>
             </div>
