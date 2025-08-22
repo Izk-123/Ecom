@@ -20,7 +20,7 @@ urlpatterns = [
 
     # auth
     path('accounts/login/', auth_views.LoginView.as_view(template_name='auth/login.html'), name='login'),
-    path('accounts/logout/', auth_views.LogoutView.as_view(), name='logout'),
+    #path('accounts/logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('accounts/signup/customer/', signup_customer, name='signup_customer'),
     path('accounts/signup/vendor/', signup_vendor, name='signup_vendor'),
     path('accounts/logout/', custom_logout, name='logout'),
@@ -38,7 +38,7 @@ urlpatterns = [
     path('vendor/products/<int:pk>/delete/', ProductDeleteView.as_view(), name='product_delete'),
     
     # Vendor approval
-    path('admin/approve-vendor/<int:user_id>/', approve_vendor, name='approve_vendor'),
+    path('manage/approve-vendor/<int:user_id>/', approve_vendor, name='approve_vendor'),
     
     # Wallet
     path('wallet/', wallet_detail, name='wallet_detail'),

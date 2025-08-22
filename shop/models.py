@@ -29,6 +29,11 @@ class Product(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     def __str__(self): return self.name
 
+# New model for product images
+class ProductImage(models.Model):
+    product = models.ForeignKey(Product, related_name='images', on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='products/')
+
 class Order(models.Model):
     customer = models.ForeignKey(User, on_delete=models.PROTECT)
     total_amount_mwk = models.PositiveIntegerField(default=0)
@@ -65,7 +70,6 @@ class ManualPayment(models.Model):
     reviewed_at = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
-# Add Wallet model
 class Wallet(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='wallet')
     balance_mwk = models.PositiveIntegerField(default=0)

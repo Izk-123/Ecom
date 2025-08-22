@@ -1,3 +1,4 @@
+# shop/views.py (updated, added formset handling)
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -7,24 +8,28 @@ from django.core.paginator import Paginator
 from django.contrib.auth import logout
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
-from .models import Product, Order, OrderItem, Payment, ManualPayment, User, Wallet
+from django.forms import inlineformset_factory  # Added for formsets
+from django.contrib import messages
+from .models import Product, Order, OrderItem, Payment, ManualPayment, User, Wallet, ProductImage  # Added ProductImage
 from .forms import CheckoutForm, ManualPaymentForm, CustomerSignUpForm, VendorSignUpForm
 
-# Public views
+# Inline formset for product images (allows multiple uploads)
+ProductImageFormSet = inlineformset_factory(
+    Product, ProductImage, fields=('image',), extra=3, can_delete=True, max_num=10  # Basic: Up to 10 images, 3 forms shown
+)
 
+# Public views
 def home(request):
     qs = Product.objects.order_by('-id')
     paginator = Paginator(qs, 12)
     page = request.GET.get('page')
     return render(request, 'home.html', {'page_obj': paginator.get_page(page)})
 
-
 def product_detail(request, slug):
     obj = get_object_or_404(Product, slug=slug)
     return render(request, 'product_detail.html', {'object': obj})
 
 # session cart
-
 def add_to_cart(request):
     if request.method == 'POST':
         pid = str(request.POST.get('product_id'))
@@ -49,7 +54,6 @@ def signup_customer(request):
     else:
         form = CustomerSignUpForm()
     return render(request, 'auth/signup_customer.html', {'form': form})
-
 
 def signup_vendor(request):
     if request.method == 'POST':
@@ -217,9 +221,24 @@ class ProductCreateView(CreateView):
     template_name = 'product_form.html'
     success_url = reverse_lazy('vendor_product_list')
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if self.request.POST:
+            context['formset'] = ProductImageFormSet(self.request.POST, self.request.FILES)
+        else:
+            context['formset'] = ProductImageFormSet()
+        return context
+
     def form_valid(self, form):
-        form.instance.vendor = self.request.user
-        return super().form_valid(form)
+        self.object = form.save(commit=False)
+        self.object.vendor = self.request.user
+        self.object.save()
+        formset = ProductImageFormSet(self.request.POST, self.request.FILES, instance=self.object)
+        if formset.is_valid():
+            formset.save()
+            return redirect(self.get_success_url())
+        else:
+            return self.render_to_response(self.get_context_data(form=form))
 
 class ProductUpdateView(UpdateView):
     model = Product
@@ -230,6 +249,23 @@ class ProductUpdateView(UpdateView):
     def get_queryset(self):
         return Product.objects.filter(vendor=self.request.user)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if self.request.POST:
+            context['formset'] = ProductImageFormSet(self.request.POST, self.request.FILES, instance=self.object)
+        else:
+            context['formset'] = ProductImageFormSet(instance=self.object)
+        return context
+
+    def form_valid(self, form):
+        form.save()
+        formset = ProductImageFormSet(self.request.POST, self.request.FILES, instance=self.object)
+        if formset.is_valid():
+            formset.save()
+            return redirect(self.get_success_url())
+        else:
+            return self.render_to_response(self.get_context_data(form=form))
+
 class ProductDeleteView(DeleteView):
     model = Product
     template_name = 'product_confirm_delete.html'
@@ -237,8 +273,7 @@ class ProductDeleteView(DeleteView):
 
     def get_queryset(self):
         return Product.objects.filter(vendor=self.request.user)
-    
-# views.py
+
 @login_required
 def approve_vendor(request, user_id):
     if not request.user.is_admin:
@@ -246,6 +281,7 @@ def approve_vendor(request, user_id):
     vendor = get_object_or_404(User, id=user_id, role=User.VENDOR)
     vendor.vendor_approved = True
     vendor.save()
+    messages.success(request, f"Vendor {vendor.username} has been approved successfully!")
     return redirect('dashboard_admin')
 
 # views.py

@@ -22,8 +22,10 @@
                 <h6 class="mb-0">{{ v.username }}</h6>
                 <small class="text-muted">{{ v.email }}</small>
               </div>
-                <a href="{% url 'approve_vendor' v.id %}" class="btn btn-sm btn-success">Approve</a>
+              <div>
+                <a href="{% url 'approve_vendor' v.id %}" class="btn btn-sm btn-success me-1">Approve</a>
                 <a href="/admin/shop/user/{{ v.id }}/change/" class="btn btn-sm btn-outline-secondary">Details</a>
+              </div>
             </div>
             {% endfor %}
           </div>
